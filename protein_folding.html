@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ויזואליזציה אינטרקטיבית לקיפול חלבונים</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧬 ויזואליזציה אינטרקטיבית לקיפול חלבונים</h1>
+            <p>גרור כדי לסובב • גלגל עכבר כדי להתקרב/להתרחק</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="representation">סוג ייצוג:</label>
+                <select id="representation">
+                    <option value="ribbon">סרט (Ribbon)</option>
+                    <option value="ball-stick">כדור-מקל (Ball & Stick)</option>
+                    <option value="spacefill">מלא (Space Fill)</option>
+                    <option value="cartoon">קריקטורה (Cartoon)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="folding-speed">מהירות קיפול:</label>
+                <input type="range" id="folding-speed" min="0.1" max="3" step="0.1" value="1">
+                <span id="speed-value">1.0x</span>
+            </div>
+
+            <div class="control-group">
+                <button id="play-pause" class="btn-primary">▶ התחל קיפול</button>
+                <button id="reset" class="btn-secondary">🔄 איפוס</button>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="show-atoms" checked>
+                    הצג אטומים
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="show-bonds" checked>
+                    הצג קשרים
+                </label>
+            </div>
+        </div>
+
+        <div id="canvas-container"></div>
+
+        <div class="info-panel">
+            <h3>מידע על החלבון</h3>
+            <div class="info-item">
+                <span class="label">מספר אטומים:</span>
+                <span id="atom-count">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">מספר קשרים:</span>
+                <span id="bond-count">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">שלב קיפול:</span>
+                <span id="folding-stage">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
