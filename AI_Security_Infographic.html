@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דוח סיכוני אבטחה ב-AI</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Palette: "Cyber Defense"
+         Primary Blue: #0d47a1
+         Alert Red: #d32f2f
+         Tech Cyan: #00acc1
+         Background: #f3f4f6
+         Card Bg: #ffffff
+    -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    },
+                    colors: {
+                        cyber: {
+                            dark: '#0d47a1',
+                            light: '#e3f2fd',
+                            alert: '#d32f2f',
+                            safe: '#00acc1',
+                            bg: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Chart Container Styling per Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width constraint */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px; /* Max height constraint */
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0d47a1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00acc1; 
+        }
+
+        /* Diagram Connectors for CSS Flows */
+        .flow-arrow::after {
+            content: '▼';
+            font-size: 1.5rem;
+            color: #94a3b8;
+            display: block;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        @media (min-width: 768px) {
+            .flow-arrow-md::after {
+                content: '◀'; /* RTL Arrow pointing left */
+                font-size: 1.5rem;
+                display: inline-block;
+                margin: 0 1rem;
+            }
+            .flow-arrow-md {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+    <!-- 
+        NARRATIVE PLAN:
+        1. Title & Intro: Establish the dual threat landscape (Models & Code).
+        2. Deep Dive - Models: Explain the Pickle vulnerability using visual comparison (Chart) and "Trojan Horse" metaphor (CSS Diagram).
+        3. Deep Dive - Code Gen: Explain the Hallucination -> Squatting attack chain using a timeline flow (CSS Diagram) and prevalence data (Chart).
+        4. Conclusion: Three-step mitigation plan.
+        
+        VISUALIZATION CHOICES (NO SVG):
+        - Bar Chart: Comparing Security Score of Pickle vs Safetensors. Goal: Compare.
+        - CSS Diagram: "The Pickle Trap" - Visualizing hidden code execution. Goal: Inform.
+        - Doughnut Chart: Hallucinations share. Goal: Inform/Context.
+        - CSS Timeline: "Squatting Attack Lifecycle". Goal: Process/Flow.
+    -->
+</head>
+<body class="bg-cyber-bg text-gray-800 font-sans leading-relaxed selection:bg-cyber-safe selection:text-white">
+
+    <!-- Header Section -->
+    <header class="bg-cyber-dark text-white shadow-lg border-b-4 border-cyber-safe">
+        <div class="container mx-auto px-6 py-12 text-center">
+            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">דוח איומי סייבר ב-AI</h1>
+            <p class="text-xl md:text-2xl text-cyber-light font-light max-w-3xl mx-auto">
+                ניתוח מעמיק של סיכוני שרשרת האספקה: ממודלים נגועים ועד הזיות קוד
+            </p>
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <span class="bg-cyber-safe text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm">מבוסס על מחקרי JFrog & Hugging Face</span>
+                <span class="bg-cyber-alert text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm">מבוסס על מחקרי Lasso Security</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12 space-y-20">
+
+        <!-- Executive Summary Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-md border-r-4 border-cyber-alert transform hover:-translate-y-1 transition duration-300">
+                <div class="text-5xl mb-4">🛡️</div>
+                <h3 class="text-xl font-bold mb-2 text-cyber-dark">משטח התקיפה החדש</h3>
+                <p class="text-gray-600 text-sm">אימוץ ה-AI יצר "שטח תקיפה" בלתי מוכר. האקרים מנצלים את האמון העיוור של מפתחים במודלים ובקוד גנרטיבי.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-md border-r-4 border-cyber-safe transform hover:-translate-y-1 transition duration-300">
+                <div class="text-5xl mb-4">📦</div>
+                <h3 class="text-xl font-bold mb-2 text-cyber-dark">סכנת המודלים</h3>
+                <p class="text-gray-600 text-sm">מודלים של ML אינם רק קבצי נתונים. פורמט Pickle מאפשר הרצת קוד זדוני אוטומטית בעת הטעינה.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-md border-r-4 border-purple-500 transform hover:-translate-y-1 transition duration-300">
+                <div class="text-5xl mb-4">👻</div>
+                <h3 class="text-xl font-bold mb-2 text-cyber-dark">הזיות קוד</h3>
+                <p class="text-gray-600 text-sm">מודלי שפה ממציאים חבילות תוכנה שלא קיימות. האקרים "תופסים" את השמות הללו ומפיצים נוזקות.</p>
+            </div>
+        </section>
+
+        <!-- Section 1: The Model Threat -->
+        <section>
+            <div class="flex flex-col md:flex-row items-center mb-8 gap-4">
+                <div class="bg-cyber-dark text-white p-3 rounded-lg text-2xl">01</div>
+                <h2 class="text-3xl font-bold text-gray-800">הסוס הטרויאני: סכנות במודלים מוכנים</h2>
+            </div>
+            
+            <p class="text-lg text-gray-600 mb-10 max-w-4xl border-r-4 border-gray-300 pr-4">
+                התפיסה הרווחת היא שמודל הוא "קופסה שחורה" של מתמטיקה. בפועל, הורדת מודל מ-Hugging Face שקולה להורדת קובץ הרצה (EXE) לא ידוע. פורמט השמירה הנפוץ <strong>Pickle</strong> מאפשר לתוקפים להחביא סקריפטים זדוניים שרצים אוטומטית.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                
+                <!-- Visual 1: Chart - Format Comparison -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <h3 class="text-lg font-bold text-cyber-dark mb-4 text-center">דירוג אבטחה: Pickle לעומת Safetensors</h3>
+                    <p class="text-xs text-gray-500 text-center mb-6">השוואה הממחישה את הפער הדרמטי בבטיחות בין הפורמטים</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="modelSecurityChart"></canvas>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-red-50 rounded-lg text-sm text-red-800 border-r-4 border-red-400">
+                        <strong>השורה התחתונה:</strong> שימוש ב-Pickle חושף את הארגון להרצת קוד שרירותי (RCE). ההמלצה היא לעבור ל-Safetensors הבטוח יותר.
+                    </div>
+                </div>
+
+                <!-- Visual 2: CSS Diagram - The Trojan Mechanism -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-full">
+                    <h3 class="text-lg font-bold text-cyber-dark mb-6 text-center">מנגנון התקיפה ("The Trojan Flow")</h3>
+                    
+                    <div class="flex flex-col space-y-4">
+                        <!-- Step 1 -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-2 bg-gray-400"></div>
+                            <div class="text-4xl ml-4">📥</div>
+                            <div>
+                                <h4 class="font-bold text-gray-700">הורדה</h4>
+                                <p class="text-sm text-gray-500">המפתח מוריד מודל "תמים" ממאגר ציבורי.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow"></div>
+
+                        <!-- Step 2 -->
+                        <div class="flex items-center p-4 bg-yellow-50 rounded-lg border border-yellow-200 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-2 bg-yellow-400"></div>
+                            <div class="text-4xl ml-4">⚙️</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">טעינה (Deserialization)</h4>
+                                <p class="text-sm text-gray-600">פונקציית <code>model.load()</code> מפענחת את הקובץ.</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow"></div>
+
+                        <!-- Step 3 -->
+                        <div class="flex items-center p-4 bg-red-50 rounded-lg border border-red-200 relative overflow-hidden shadow-inner">
+                            <div class="absolute left-0 top-0 bottom-0 w-2 bg-red-500"></div>
+                            <div class="text-4xl ml-4">💀</div>
+                            <div>
+                                <h4 class="font-bold text-red-800">הפעלה זדונית</h4>
+                                <p class="text-sm text-red-700">הקוד המוחבא רץ ברקע. הדלת האחורית נפתחת, מפתחות נגנבים.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 2: AI Code Generation Risks -->
+        <section class="bg-blue-50 -mx-4 px-4 py-16 rounded-3xl">
+            <div class="container mx-auto">
+                <div class="flex flex-col md:flex-row items-center mb-8 gap-4">
+                    <div class="bg-cyber-alert text-white p-3 rounded-lg text-2xl">02</div>
+                    <h2 class="text-3xl font-bold text-gray-800">מלכודת "הזיות החבילות"</h2>
+                </div>
+
+                <p class="text-lg text-gray-600 mb-10 max-w-4xl border-r-4 border-cyber-alert pr-4">
+                    כאשר מפתחים מסתמכים על GenAI לכתיבת קוד, הם נחשפים למתקפה מתוחכמת. המודל "ממציא" שמות של חבילות קוד (הזיות), והאקרים מנצלים זאת כדי ליצור חבילות זדוניות באותם שמות בדיוק.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Visual 3: Chart - Hallucination Prevalence -->
+                    <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">אמינות המלצות AI</h3>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="hallucinationChart"></canvas>
+                        </div>
+                        <p class="text-sm text-center text-gray-500 mt-4">
+                            חלק ניכר מהחבילות שה-AI מציע אינן קיימות, מה שיוצר פתח לתקיפה.
+                        </p>
+                    </div>
+
+                    <!-- Visual 4: Flow Diagram - The Squatting Attack -->
+                    <div class="md:col-span-2 bg-white p-8 rounded-xl shadow-lg flex flex-col justify-center">
+                        <h3 class="text-lg font-bold text-cyber-dark mb-8 text-center border-b pb-4">תהליך מתקפת "כיבוש השמות" (Squatting Attack)</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                            <!-- Card 1 -->
+                            <div class="bg-gray-50 p-4 rounded-lg border text-center relative z-10">
+                                <div class="text-3xl mb-2">🤖</div>
+                                <h4 class="font-bold text-sm mb-1">הזיה</h4>
+                                <p class="text-xs text-gray-500">ה-AI ממליץ על חבילה דמיונית: <code>img-fix-v2</code></p>
+                            </div>
+
+                            <!-- Connector Mobile -->
+                            <div class="md:hidden text-center text-gray-400 text-2xl">▼</div>
+                            <!-- Connector Desktop -->
+                            <div class="hidden md:flex items-center justify-center text-gray-400 text-2xl absolute top-1/2 -right-6 w-12 transform -translate-y-1/2 z-0">◀</div>
+
+                            <!-- Card 2 -->
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-200 text-center relative z-10">
+                                <div class="text-3xl mb-2">👾</div>
+                                <h4 class="font-bold text-sm mb-1 text-red-700">ניטור</h4>
+                                <p class="text-xs text-red-600">האקר מזהה את ההזיה החוזרת</p>
+                            </div>
+
+                             <!-- Connector Mobile -->
+                             <div class="md:hidden text-center text-gray-400 text-2xl">▼</div>
+
+                            <!-- Card 3 -->
+                            <div class="bg-red-100 p-4 rounded-lg border border-red-300 text-center relative z-10 shadow-lg">
+                                <div class="text-3xl mb-2">💣</div>
+                                <h4 class="font-bold text-sm mb-1 text-red-800">הפצה</h4>
+                                <p class="text-xs text-red-700">האקר מעלה חבילה זדונית בשם <code>img-fix-v2</code></p>
+                            </div>
+
+                             <!-- Connector Mobile -->
+                             <div class="md:hidden text-center text-gray-400 text-2xl">▼</div>
+
+                            <!-- Card 4 -->
+                            <div class="bg-gray-800 text-white p-4 rounded-lg border border-gray-700 text-center relative z-10">
+                                <div class="text-3xl mb-2">💻</div>
+                                <h4 class="font-bold text-sm mb-1">הדבקה</h4>
+                                <p class="text-xs text-gray-400">המפתח מתקין את החבילה לפי המלצת ה-AI</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Mitigation Strategies -->
+        <section>
+            <div class="flex flex-col md:flex-row items-center mb-8 gap-4">
+                <div class="bg-cyber-safe text-white p-3 rounded-lg text-2xl">03</div>
+                <h2 class="text-3xl font-bold text-gray-800">המלצות למיגון (Action Plan)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Strategy 1 -->
+                <div class="bg-white border-t-4 border-cyber-safe p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <div class="text-cyber-safe text-4xl mb-4">🔍</div>
+                    <h3 class="text-xl font-bold mb-2">סריקה בינארית</h3>
+                    <p class="text-gray-600 text-sm mb-4">אל תסמכו על מטה-דאטה בלבד. השתמשו בכלים (כמו JFrog) לסריקת עומק של קבצי המודל לפני הכניסה לארגון.</p>
+                    <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+                        <li>זיהוי קוד Pickle</li>
+                        <li>חסימת מודלים חשודים</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy 2 -->
+                <div class="bg-white border-t-4 border-cyber-dark p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <div class="text-cyber-dark text-4xl mb-4">🛂</div>
+                    <h3 class="text-xl font-bold mb-2">אימות ידני</h3>
+                    <p class="text-gray-600 text-sm mb-4">קיבלתם המלצה לקוד מ-AI? בדקו שהחבילה קיימת במאגר הרשמי, שיש לה הורדות רבות ומתוחזקת.</p>
+                    <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+                        <li>בדיקת תאריך יצירה</li>
+                        <li>אימות זהות המפתח</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy 3 -->
+                <div class="bg-white border-t-4 border-purple-600 p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <div class="text-purple-600 text-4xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold mb-2">Proxy ארגוני</h3>
+                    <p class="text-gray-600 text-sm mb-4">נתקו את הגישה הישירה של המפתחים לאינטרנט. נהלו מאגר (Artifact Registry) מרכזי ומסונן.</p>
+                    <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+                        <li>מניעת הורדה ישירה</li>
+                        <li>שמירת גרסאות בטוחות</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-20 border-t border-gray-200 py-8 text-center text-gray-500 text-sm">
+            <p>© 2025 נוצר על בסיס דוח אבטחה משולב | JFrog x Hugging Face | Lasso Security</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Helper Function: Label Wrapping (16 chars) ---
+        function wrapLabel(label) {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= 16) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- Common Chart Options ---
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        font: { family: 'Rubik', size: 12 },
+                        color: '#374151' // gray-700
+                    },
+                    rtl: true, // Support for RTL legend
+                    textDirection: 'rtl'
+                },
+                tooltip: {
+                    titleFont: { family: 'Rubik', size: 14 },
+                    bodyFont: { family: 'Rubik', size: 13 },
+                    rtl: true,
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- Chart 1: Model Security Comparison (Bar) ---
+        // Data Justification: Illustrating the risk disparity described in the report.
+        const ctxModel = document.getElementById('modelSecurityChart').getContext('2d');
+        const labelsModel = ['Pickle (PyTorch)', 'Safetensors', 'ONNX'];
+        
+        new Chart(ctxModel, {
+            type: 'bar',
+            data: {
+                labels: labelsModel.map(wrapLabel),
+                datasets: [{
+                    label: 'ציון סיכון אבטחה (נמוך = בטוח)',
+                    data: [90, 10, 20], // High risk for Pickle, Low for Safetensors
+                    backgroundColor: [
+                        '#d32f2f', // Red for Danger
+                        '#00acc1', // Cyan for Safe
+                        '#0d47a1'  // Blue for Medium/Safe
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: 'רמת סיכון', font: { family: 'Rubik' } },
+                        position: 'right' // RTL Y-axis
+                    },
+                    x: {
+                        reverse: true // RTL X-axis
+                    }
+                }
+            }
+        });
+
+        // --- Chart 2: Hallucination Prevalence (Doughnut) ---
+        // Data Justification: Lasso's report emphasizes that hallucinations are a "frequent" and "significant" threat.
+        // Using illustrative percentages to convey the "Trap".
+        const ctxHallucination = document.getElementById('hallucinationChart').getContext('2d');
+        const labelsHallucination = ['חבילות תקינות', 'הזיות (פוטנציאל תקיפה)'];
+
+        new Chart(ctxHallucination, {
+            type: 'doughnut',
+            data: {
+                labels: labelsHallucination.map(wrapLabel),
+                datasets: [{
+                    data: [75, 25], // Illustrative split based on "significant risk"
+                    backgroundColor: [
+                        '#e0e0e0', // Gray for normal
+                        '#d32f2f'  // Red for hallucinated/risk
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                cutout: '60%',
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: { font: { family: 'Rubik' } }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
