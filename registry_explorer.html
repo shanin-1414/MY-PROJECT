@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חוקר הרג'יסטרי - מדריך פורנזי</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border: #334155;
+            --code-bg: #020617;
+            --category-persistence: #ef4444; /* Red */
+            --category-user: #eab308; /* Yellow */
+            --category-hardware: #3b82f6; /* Blue */
+            --category-network: #22c55e; /* Green */
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 350px;
+            background-color: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .logo-area {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .logo-area h1 { margin: 0; font-size: 1.5rem; color: var(--text-primary); }
+        .logo-area span { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .search-container {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .key-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 10px;
+        }
+
+        .key-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-right: 3px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .key-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .key-item.active { background-color: rgba(99, 102, 241, 0.1); border-right-color: var(--accent); }
+        
+        .key-title { font-weight: 500; display: block; }
+        .key-cat { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; color: #fff; opacity: 0.8; }
+
+        /* Main Content */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            display: none; /* Hidden by default */
+        }
+        
+        .content-card.visible { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-section { margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .category-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; color: #fff; }
+        
+        h2 { margin: 0 0 10px 0; font-size: 2rem; }
+        
+        .description { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 30px; }
+
+        .code-section {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .path-label {
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: #a5b4fc;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 10px;
+            direction: ltr; /* Ensure paths are LTR */
+            text-align: left;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .forensic-value {
+            background: rgba(99, 102, 241, 0.05);
+            border-right: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .forensic-title { font-weight: bold; color: var(--accent); display: block; margin-bottom: 10px; }
+
+        .tips-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .tip-card { background: rgba(34, 197, 94, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.2); }
+
+        /* Welcome State */
+        .welcome-state {
+            text-align: center;
+            padding-top: 100px;
+            color: var(--text-secondary);
+        }
+        .welcome-icon { font-size: 5rem; margin-bottom: 20px; opacity: 0.5; }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; }
+            aside { width: 100%; height: 300px; }
+            main { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<aside>
+    <div class="logo-area">
+        <h1>Registry Forensics</h1>
+        <span>מדריך תהליכי חקירה</span>
+        <div style="margin-top:10px;"><a href="index.html" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">← חזרה לראשי</a></div>
+    </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="חפש מפתח, נתיב או תיאור...">
+    </div>
+    <div class="key-list" id="keyList">
+        <!-- populated by JS -->
+    </div>
+</aside>
+
+<main>
+    <div id="welcomeState" class="welcome-state">
+        <div class="welcome-icon">🔍</div>
+        <h2>בחר מפתח רג'יסטרי מהרשימה</h2>
+        <p>צפה בנתיבים קריטיים לחקירה, זיהוי נוזקות ופעילות משתמש.</p>
+        
+        <div class="tips-section" style="max-width: 600px; margin: 40px auto; text-align: right;">
+            <div class="tip-card">
+                <strong>💡 טיפ לחוקר:</strong>
+                אל תפחדו לחפש בגוגל מפתחות שנראים כג'יבריש. לעיתים ערכים בינאריים ידרשו המרה או שימוש בכלים כמו HxD כדי להבין אם מדובר במסמך, כונן או הפעלה זדונית.
+            </div>
+        </div>
+    </div>
+
+    <div id="detailCard" class="content-card">
+        <div class="header-section">
+            <span id="detailBadge" class="category-badge"></span>
+            <h2 id="detailTitle"></h2>
+        </div>
+        
+        <div class="description" id="detailDesc"></div>
+
+        <div class="code-section">
+            <div class="path-label">Registry Path</div>
+            <code id="detailPath"></code>
+            <button class="copy-btn" onclick="copyPath()">
+                <span>📋 העתק נתיב</span>
+            </button>
+        </div>
+
+        <div class="forensic-value">
+            <span class="forensic-title">🕵️ משמעות בחקירה</span>
+            <span id="detailForensic"></span>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Data Source based on the PDF content
+    const registryData = [
+        {
+            id: 1,
+            title: "מפתחות הפעלה (Run Keys)",
+            category: "Persistence",
+            catColor: "var(--category-persistence)",
+            path: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\nHKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+            description: "מפתחות ה-Run הם המקום הנפוץ ביותר לנוזקות ליצירת 'התמדה' (Persistence). תוכניות המופיעות כאן ירוצו אוטומטית בכל פעם שהמשתמש מתחבר למערכת.",
+            forensic: "בדוק האם קיימים כאן נתיבים לקבצים חשודים או לא מוכרים. תוקף יכול להכניס לכאן נתיב זדוני כך שגם אם המחשב יכבה, הנוזקה תעלה מחדש עם הדלקתו."
+        },
+        {
+            id: 2,
+            title: "הפעלה חד-פעמית (RunOnce)",
+            category: "Persistence",
+            catColor: "var(--category-persistence)",
+            path: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\nHKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+            description: "דומה למפתחות ה-Run, אך נועד לתוכניות שצריכות לרוץ פעם אחת בלבד בהפעלה הבאה (לרוב התקנות ועדכונים).",
+            forensic: "נוזקות לעיתים משתמשות במפתח זה כדי להריץ שלב ראשוני של הדבקה ואז מוחקות את עצמן משם, או מוסיפות את עצמן מחדש בכל ריצה כדי לעקוף מנגנוני זיהוי."
+        },
+        {
+            id: 3,
+            title: "מעבד הפקודות (Auto Run)",
+            category: "Persistence",
+            catColor: "var(--category-persistence)",
+            path: "HKLM\\SOFTWARE\\Microsoft\\Command Processor\\AutoRun",
+            description: "מפתח זה מאפשר להגדיר פקודה שתרוץ באופן אוטומטי בכל פעם שחלון CMD נפתח (Event-driven execution).",
+            forensic: "אם תוקף שתל כאן פקודה, כל פעם שמנהל המערכת או המשתמש יפתחו שורת פקודה, הקוד הזדוני ירוץ ברקע ללא ידיעתם."
+        },
+        {
+            id: 4,
+            title: "תהליך כניסה (Winlogon)",
+            category: "Persistence",
+            catColor: "var(--category-persistence)",
+            path: "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
+            description: "תהליך ה-Winlogon אחראי על ניהול התחברות המשתמש. מפתחות ה-Shell וה-Userinit קובעים אילו תוכניות יעלו מיד עם הממשק הגרפי.",
+            forensic: "תוקפים יכולים לשרשר את הנוזקה שלהם לפקודת ה-explorer.exe או userinit.exe כך שהיא תעלה כחלק לגיטימי מתהליך ההתחברות."
+        },
+        {
+            id: 5,
+            title: "התקנים מחוברים (MountedDevices)",
+            category: "Hardware",
+            catColor: "var(--category-hardware)",
+            path: "HKLM\\SYSTEM\\MountedDevices",
+            description: "מפתח זה מציג רשימה של כל ההתקנים (כוננים) שחוברו למחשב וקיבלו אות כונן (כגון C:, D:, E:).",
+            forensic: "מאפשר לראות אילו התקני אחסון (USB, CDROM, כוננים חיצוניים) חוברו למערכת, גם אם הם לא מחוברים כרגע. חיוני לזיהוי גניבת מידע פיזית."
+        },
+        {
+            id: 6,
+            title: "היסטוריית USB (USBSTOR)",
+            category: "Hardware",
+            catColor: "var(--category-hardware)",
+            path: "HKEY_LOCAL_MACHINE\\SYSTEM\\controlset001\\Enum\\USBSTOR",
+            description: "מכיל היסטוריה מפורטת של התקני USB שחוברו למערכת, כולל יצרן, דגם ומזהה ייחודי.",
+            forensic: "מאפשר להתאים בין 'דיסק און קי' ספציפי שנמצא אצל חשוד לבין המחשב הנחקר, ולהבין מתי הוא חובר לראשונה."
+        },
+        {
+            id: 7,
+            title: "כתובות שהוקלדו (TypedURLs)",
+            category: "User Activity",
+            catColor: "var(--category-user)",
+            path: "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs",
+            description: "רשימה של כתובות אתרים (URLs) שהוקלדו ידנית בשורת הכתובת של אינטרנט אקספלורר (ולעיתים דפדפנים מבוססי מערכת).",
+            forensic: "מצביע על כוונה מפורשת של המשתמש להגיע לאתר מסוים, בשונה מהיסטוריית גלישה רגילה שיכולה לכלול הפניות אוטומטיות ופרסומות."
+        },
+        {
+            id: 8,
+            title: "היסטוריית פקודות (RunMRU)",
+            category: "User Activity",
+            catColor: "var(--category-user)",
+            path: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU",
+            description: "שומר את היסטוריית הפקודות שהוקלדו בחלון ה-'Run' (WinKey + R). ה-MRU עומד על 'Most Recently Used'.",
+            forensic: "עוזר מאוד להבין מה המשתמש (או התוקף) ניסה להריץ באופן ישיר. ניתן לראות פקודות CMD, ניסיונות גישה לתיקיות רשת ועוד."
+        },
+        {
+            id: 9,
+            title: "מסמכים אחרונים (RecentDocs)",
+            category: "User Activity",
+            catColor: "var(--category-user)",
+            path: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs",
+            description: "רשימת המסמכים והקבצים האחרונים שהמשתמש פתח (Word, Excel, PDF וכו').",
+            forensic: "מאפשר לשחזר את סדר הפעולות של המשתמש לפני האירוע. ניתן לראות סיומות קבצים ולעיתים גם קבצים שנמחקו מאז."
+        },
+        {
+            id: 10,
+            title: "אפליקציות אחרונות (RecentApps)",
+            category: "User Activity",
+            catColor: "var(--category-user)",
+            path: "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Currentversion\\Search\\RecentApps",
+            description: "רשימה של תוכנות ואפליקציות שהיו בשימוש לאחרונה.",
+            forensic: "מספק תמונה רחבה יותר על הפעילות במחשב, כולל תוכנות שאולי לא הותקנו בצורה מסודרת אלא הורצו כ-Portable."
+        },
+        {
+            id: 11,
+            title: "פרופילי רשת (Network Profiles)",
+            category: "Network",
+            catColor: "var(--category-network)",
+            path: "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\NetworkList\\Profiles",
+            description: "מציג את שמות הרשתות (SSID) שהמחשב התחבר אליהן בעבר, כולל רשתות אלחוטיות וקוויות.",
+            forensic: "מיקום גיאוגרפי עקיף - אם אנו יודעים שהמחשב התחבר ל-WiFi בשם 'Cafe_TelAviv', זה ממקם את המכשיר פיזית."
+        },
+        {
+            id: 12,
+            title: "ממשקי רשת (Interfaces)",
+            category: "Network",
+            catColor: "var(--category-network)",
+            path: "HKLM\\System\\Services\\CurrentControlSet\\services\\Tcpip\\Parameters\\Interfaces",
+            description: "מכיל הגדרות TCP/IP עבור כל כרטיס רשת, כולל כתובות IP שהוקצו, Subnet Mask ו-Gateway.",
+            forensic: "חיוני לחקירת רשת - מאפשר לקחת את כתובת ה-IP שנמצאה ולהמשיך לחקור בלוגים של Firewall או ב-Wireshark."
+        },
+        {
+            id: 13,
+            title: "שירותים (Services)",
+            category: "System",
+            catColor: "var(--text-secondary)",
+            path: "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services",
+            description: "מכיל מידע על כל השירותים (Services) שמותקנים במערכת, כולל אלו שמוגדרים לעלות אוטומטית (Start=2).",
+            forensic: "נוזקות מתוחכמות מתקינות את עצמן כ-Service כדי לרוץ ברקע עם הרשאות גבוהות (SYSTEM) ולהיות קשות יותר לעצירה."
+        }
+    ];
+
+    // Functions
+    const keyList = document.getElementById('keyList');
+    const searchInput = document.getElementById('searchInput');
+
+    function renderList(items) {
+        keyList.innerHTML = '';
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'key-item';
+            div.onclick = () => selectItem(item, div);
+            div.innerHTML = `
+                <div>
+                    <span class="key-title">${item.title}</span>
+                </div>
+                <span class="key-cat" style="background-color: ${item.catColor}">${item.category}</span>
+            `;
+            keyList.appendChild(div);
+        });
+    }
+
+    function selectItem(item, element) {
+        // Highlight active sidebar item
+        document.querySelectorAll('.key-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+
+        // Show Content
+        document.getElementById('welcomeState').style.display = 'none';
+        const card = document.getElementById('detailCard');
+        card.classList.remove('visible');
+        
+        // Trigger reflow/animation
+        void card.offsetWidth;
+        
+        // Populate Data
+        document.getElementById('detailTitle').textContent = item.title;
+        document.getElementById('detailDesc').textContent = item.description;
+        document.getElementById('detailPath').innerText = item.path; // use innerText for newlines
+        document.getElementById('detailForensic').textContent = item.forensic;
+        
+        const badge = document.getElementById('detailBadge');
+        badge.textContent = item.category;
+        badge.style.backgroundColor = item.catColor;
+
+        card.classList.add('visible');
+    }
+
+    function copyPath() {
+        const text = document.getElementById('detailPath').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.copy-btn span');
+            const original = btn.textContent;
+            btn.textContent = "✅ הועתק!";
+            setTimeout(() => btn.textContent = original, 2000);
+        });
+    }
+
+    // Search Logic
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = registryData.filter(item => 
+            item.title.toLowerCase().includes(term) || 
+            item.path.toLowerCase().includes(term) ||
+            item.description.toLowerCase().includes(term)
+        );
+        renderList(filtered);
+    });
+
+    // Init
+    renderList(registryData);
+
+</script>
+
+</body>
+</html>
